@@ -1,0 +1,18 @@
+## Interface: 11502
+## Title: Better Sound Options
+## Notes: Randomize music, and other customizations.
+## Author: Smokey @ twitch.tv/Smokey
+## Version: 1.0.0
+## RequiredDeps:
+## X-Curse-Project-ID: 99999
+## SavedVariables: BetterSoundOptionsDB
+## SavedVariablesPerCharacter:
+# Libraries
+libs/AceAddon-3.0/AceAddon-3.0.lua
+libs/AceDB-3.0/AceDB-3.0.lua
+libs/LibDBIcon-1.0/LibDBIcon-1.0.lua
+
+# Main Files
+BetterSoundOptions.lua
+Settings.lua
+MusicList.lua
