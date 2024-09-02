@@ -7,12 +7,10 @@ BetterSoundOptionsDB = BetterSoundOptionsDB or {
 	settingsKeys = {}, avoidedMusicIDs = defaultAvoidedMusicIDs
 }
 
--- Create a frame
 local f = CreateFrame("Frame")
 local MusicCD = time() - 121
 local currentMusicID
 
--- Register events
 f:RegisterEvent("PET_BATTLE_CLOSE")
 f:RegisterEvent("CINEMATIC_STOP")
 f:RegisterEvent("SOUND_DEVICE_UPDATE")
