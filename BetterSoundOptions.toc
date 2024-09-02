@@ -4,7 +4,7 @@
 ## Author: Smokey @ twitch.tv/Smokey
 ## Version: 1.0.1
 ## RequiredDeps:
-## X-Curse-Project-ID: 99999
+## X-Curse-Project-ID: 1095696
 ## SavedVariables: BetterSoundOptionsDB
 ## SavedVariablesPerCharacter:
 # Libraries
