@@ -146,7 +146,7 @@ function BetterSoundOptions:UpdateWorld(pt, subzone)
 		local mapID = C_Map.GetBestMapForUnit("player");
 		local parentMapID = C_Map.GetMapInfo(C_Map.GetMapInfo(mapID).parentMapID)
 		if not BetterSoundOptionsDB.settingsKeys.instancesVisited[parentMapID] then
-			BetterSoundOptionsDB.settingsKeys.instancesVisited.insert(parentMapID)
+			table.insert(BetterSoundOptionsDB.settingsKeys.instancesVisited, parentMapID)
 		else
 			BetterSoundOptionsDB.PreviousDialogueSetting = GetCVar("Sound_EnableDialog")
 			SetCVar("Sound_EnableDialog", 0)
@@ -156,7 +156,7 @@ function BetterSoundOptions:UpdateWorld(pt, subzone)
 		SetCVar("Sound_EnableDialog", BetterSoundOptionsDB.PreviousDialogueSetting)
 	end
 
-	if (time() - MusicCD) > 30 and BetterSoundOptionsDB.settingsKeys.randomizeMusic then
+	if (time() - MusicCD) > 30 and BetterSoundOptionsDB.settingsKeys.randomizeMusic and GetCVarBool("Sound_EnableMusic") then
 		local music = BetterSoundOptions:randFrom(BetterSoundOptions.listfile_music)
 		BetterSoundOptions:PlayRandomMusic(music)
 	end
