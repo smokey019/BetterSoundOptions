@@ -2,7 +2,7 @@
 ## Title: Better Sound Options
 ## Notes: Randomize music, and other customizations.
 ## Author: Smokey @ twitch.tv/Smokey
-## Version: 1.0.2
+## Version: 1.0.3
 ## RequiredDeps:
 ## X-Curse-Project-ID: 1095696
 ## SavedVariables: BetterSoundOptionsDB
@@ -16,3 +16,4 @@ libs/LibDBIcon-1.0/LibDBIcon-1.0.lua
 BetterSoundOptions.lua
 Settings.lua
 MusicList.lua
+Functions.lua

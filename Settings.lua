@@ -11,6 +11,13 @@ local settings = {
 		checked = true,
 	},
 	{
+		settingText = "Automatically change music after 3 minutes to prevent infinite loop.",
+		settingKey = "autoMusicTimer",
+		settingTooltip =
+		"While enabled, this addon will change music after 3 minutes to another random song.",
+		checked = true,
+	},
+	{
 		settingText = "Disable Dialogue In Instances After First Visit",
 		settingKey = "disableDialogue",
 		settingTooltip =
@@ -40,7 +47,7 @@ local settings = {
 }
 
 local settingsFrame = CreateFrame("Frame", "BetterSoundOptionsSettingsFrame", UIParent, "BasicFrameTemplateWithInset")
-settingsFrame:SetSize(400, 300)
+settingsFrame:SetSize(400, 400)
 settingsFrame:SetPoint("CENTER")
 settingsFrame.TitleBg:SetHeight(30)
 settingsFrame.title = settingsFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")

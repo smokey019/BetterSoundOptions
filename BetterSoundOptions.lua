@@ -10,6 +10,7 @@ BetterSoundOptionsDB = BetterSoundOptionsDB or {
 local f = CreateFrame("Frame")
 local MusicCD = time() - 121
 local currentMusicID
+local AutoMusicTimer
 
 f:RegisterEvent("PET_BATTLE_CLOSE")
 f:RegisterEvent("CINEMATIC_STOP")
@@ -55,11 +56,20 @@ end
 
 SLASH_AVOIDMUSIC1 = '/avoid'
 function SlashCmdList.AVOIDMUSIC(msg, editBox)
+	if not currentMusicID then return end
+
+	if msg == '' and currentMusicID then
+		msg = currentMusicID
+	end
+
 	if not has_value(BetterSoundOptionsDB.avoidedMusicIDs, msg) then
 		table.insert(BetterSoundOptionsDB.avoidedMusicIDs, msg)
-		print('Will avoid music id:', msg)
+		BetterSoundOptions:DebugText('Avoiding Music ID:', msg)
+		if msg == currentMusicID then
+			BetterSoundOptions:PlayRandomMusic()
+		end
 	else
-		print('Already avoided that Music ID.')
+		BetterSoundOptions:DebugText('Already avoided that Music ID.')
 	end
 end
 
@@ -67,7 +77,7 @@ SLASH_CLEARAVOIDMUSIC1 = '/clearavoid'
 function SlashCmdList.CLEARAVOIDMUSIC(msg, editBox)
 	if msg == 'yesdoitpleaseuwu' then
 		BetterSoundOptionsDB.avoidedMusicIDs = defaultAvoidedMusicIDs
-		print('Cleared avoided Music ID lists')
+		BetterSoundOptions:DebugText('Cleared avoided Music ID lists')
 	end
 end
 
@@ -75,9 +85,6 @@ function BetterSoundOptions:CloseTalkingHead(self, evt, text, source, xtra)
 	if BetterSoundOptionsDB.settingsKeys.debugText then
 		local displayInfo, cameraID, vo, duration, lineNumber, numLines, name, text, isNewTalkingHead, textureKit =
 			C_TalkingHead.GetCurrentLineInfo();
-		BetterSoundOptions:DebugText(string.format("Closing chat %s: %s", name, text));
-		BetterSoundOptions:DebugText(string.format("Debug data: %s %s %s %s %s %s", displayInfo, cameraID, vo, duration,
-			lineNumber, numLines, isNewTalkingHead, textureKit));
 	end
 	TalkingHeadFrame:PlayCurrent();
 	TalkingHeadFrame:CloseImmediately();
@@ -92,25 +99,38 @@ function BetterSoundOptions:ToggleMainFrame()
 end
 
 function BetterSoundOptions:PlayRandomMusic(music)
-	BetterSoundOptions:DebugText('attempting to play music:', music)
+	if not music then
+		music = BetterSoundOptions:random_elem(BetterSoundOptions.listfile_music)
+	end
 
-	if not BetterSoundOptionsDB.avoidedMusicIDs[music] and not alreadyPlayedMusicIDs[music] then
+	BetterSoundOptions:DebugText('Now Playing Song ID:', music)
+
+	if not has_value(BetterSoundOptionsDB.avoidedMusicIDs, music) and not has_value(alreadyPlayedMusicIDs, music) then
 		PlayMusic(music)
 
 		MusicCD = time()
 		currentMusicID = music
 		table.insert(alreadyPlayedMusicIDs, music)
+		if BetterSoundOptionsDB.settingsKeys.autoMusicTimer then
+			if AutoMusicTimer then
+				AutoMusicTimer:Cancel()
+			end
+			if not GetCVarBool("Sound_EnableMusic") then return end
+			AutoMusicTimer = C_Timer.NewTimer(60,
+				function()
+					BetterSoundOptions:DebugText(
+						'Timer expired. Choosing a new song.'); BetterSoundOptions:PlayRandomMusic()
+				end)
+		end
 	else
-		BetterSoundOptions:DebugText('avoided music detected, attempting to play something else:', music)
+		BetterSoundOptions:DebugText('Avoided music detected, attempting to play something else:', music)
 
-		music = BetterSoundOptions:random_elem(BetterSoundOptions.listfile_music)
-
-		BetterSoundOptions:PlayRandomMusic(music)
+		BetterSoundOptions:PlayRandomMusic()
 	end
 end
 
 function BetterSoundOptions:SetMusic()
-	print('Playing new random Music.  Old music ID to report in case it was an annoying sound: ', currentMusicID)
+	BetterSoundOptions:DebugText('Playing new random music.\nPrevious music ID: ', currentMusicID)
 
 	local music = BetterSoundOptions:random_elem(BetterSoundOptions.listfile_music)
 
@@ -145,12 +165,12 @@ function BetterSoundOptions:UpdateWorld(pt, subzone)
 	if inInstance and BetterSoundOptionsDB.settingsKeys.disableDialogue and instanceType == "party" then
 		local mapID = C_Map.GetBestMapForUnit("player");
 		local parentMapID = C_Map.GetMapInfo(C_Map.GetMapInfo(mapID).parentMapID)
-		if not BetterSoundOptionsDB.settingsKeys.instancesVisited[parentMapID] then
+		if not has_value(BetterSoundOptionsDB.settingsKeys.instancesVisited, parentMapID) then
 			table.insert(BetterSoundOptionsDB.settingsKeys.instancesVisited, parentMapID)
 		else
 			BetterSoundOptionsDB.PreviousDialogueSetting = GetCVar("Sound_EnableDialog")
 			SetCVar("Sound_EnableDialog", 0)
-			BetterSoundOptions:DebugText('previously entered dungeon detected. disabling dialogue.')
+			BetterSoundOptions:DebugText('Previously entered dungeon detected. disabling dialogue.')
 		end
 	elseif not IsInInstance() and BetterSoundOptionsDB.settingsKeys.disableDialogue then
 		SetCVar("Sound_EnableDialog", BetterSoundOptionsDB.PreviousDialogueSetting)
@@ -179,8 +199,8 @@ function BetterSoundOptions:GetProfileType()
 	return "none"
 end
 
-function BetterSoundOptions:DebugText(text, ...)
+function BetterSoundOptions:DebugText(...)
 	if BetterSoundOptionsDB.settingsKeys.debugText then
-		print(text, ...)
+		print(OrangeText('BetterSoundOptions:'), ...)
 	end
 end
