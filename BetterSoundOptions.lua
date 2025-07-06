@@ -6,7 +6,7 @@ local CONSTANTS = {
 	MUSIC_COOLDOWN_THRESHOLD = 30,
 	AUTO_MUSIC_TIMER_DURATION = 60,
 	EVENT_DELAY = 0.1,
-	MAX_PLAYED_MUSIC_HISTORY = 100, -- Prevent memory bloat
+	MAX_PLAYED_MUSIC_HISTORY = 100, -- Prevent memory bloat!
 }
 
 -- Local variables
